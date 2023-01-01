@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: almaher-backend-deployment
+  labels:
+    app: almaher-backend
+spec:
+  selector:
+    matchLabels:
+      app: almaher-backend
+  template:
+    metadata:
+      labels:
+        app: almaher-backend
+    spec:
+      containers:
+        - name: almaher-backend
+          image: registry.gyoom.sa/almaher-backend:latest
+          ports:
+            - containerPort: 8080
+          resources:
+              limits:
+                cpu: 200m
+              requests:
+                cpu: 100m

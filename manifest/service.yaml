@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: almaher-backend-service
+spec:
+  selector:
+    app: almaher-backend
+  ports:
+    - port: 80
+      targetPort: 8080

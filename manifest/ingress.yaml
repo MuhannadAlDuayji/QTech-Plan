@@ -1,0 +1,28 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: almaher-backend-ingress
+  annotations:
+    cert-manager.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/client-max-body-size: 500m
+    nginx.ingress.kubernetes.io/proxy-body-size: 500m
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    nginx.ingress.kubernetes.io/secure-backends: 'true'
+    nginx.org/client-max-body-size: 500m
+spec:
+  tls:
+    - hosts:
+        - api.almaher.org
+      secretName: api-almaher-org-acme-crt-secret
+  rules:
+    - host: api.almaher.org
+      http:
+        paths:
+          - path: /
+            pathType: Prefix
+            backend:
+              service:
+                name: almaher-backend-service
+                port:
+                  number: 80
