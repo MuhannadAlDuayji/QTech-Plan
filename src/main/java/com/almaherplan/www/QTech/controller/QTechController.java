@@ -1,12 +1,17 @@
 
 package com.almaherplan.www.QTech.controller;
 
-import com.almaherplan.www.QTech.model.Person;
+import com.almaherplan.www.QTech.model.RequestPrint;
 import com.almaherplan.www.QTech.model.RequestQTech;
 import com.almaherplan.www.QTech.model.ResponseQTech;
 import com.almaherplan.www.QTech.service.QTechService;
+import net.sf.jasperreports.engine.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
+
+import java.io.IOException;
+import java.util.List;
 
 
 @CrossOrigin("*")
@@ -16,9 +21,10 @@ public class QTechController {
     @Autowired
     QTechService qTechService;
 
+
     @GetMapping()
     public String getTest(){
-        return "Hi Muhannad ";
+        return "Hi Muhannad";
     }
 
 
@@ -27,14 +33,17 @@ public class QTechController {
             return qTechService.responseQTech(requestQTech);
     }
 
-    @PostMapping(value = "/open")
-    public String getOpen(@RequestBody Person s){
+    @PostMapping ("/printData/{printType}")
+    public String setQTechService(@RequestBody List<RequestPrint> list, @PathVariable String printType) throws JRException, IOException {
 
-        String fullNameWithWelcome="Welcome " + s.getLastName()+", "+s.getFirstName();
-        System.out.println("Hello "+fullNameWithWelcome);
+        System.out.printf("Data Pass .... "+printType);
 
-        return fullNameWithWelcome;
+        return qTechService.printPlan(list,printType);
     }
+
+
+
+
 
 }
 

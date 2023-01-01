@@ -9,11 +9,15 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 
+import java.util.Arrays;
+
 
 @SpringBootApplication
 public class QTechApplication {
 
 	public static void main(String[] args) {
+
+		System.out.println("args = " + Arrays.deepToString(args));
 		SpringApplication.run(QTechApplication.class, args);
 	}
 
@@ -32,7 +36,7 @@ public class QTechApplication {
 
 			System.out.println("***************************************************");
 			System.out.println("***************************************************");
-			System.out.println("***************************************************");
+			System.out.println("***s************************************************");
 			//sorahList.forEach(System.out::println);
 			System.out.println("###################################################");
 			//qTechService.getSmallMemorized(sorahList,3).forEach(System.out::println);
@@ -41,7 +45,6 @@ public class QTechApplication {
 			System.out.println("***************************************************");
 			System.out.println("***************************************************");
 			System.out.println("***************************************************");
-
 			//getSmallMemorized(sorahList,3).forEach( s -> System.out.println(" - "+s));
 
 

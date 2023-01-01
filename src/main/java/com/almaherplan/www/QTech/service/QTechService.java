@@ -2,23 +2,40 @@ package com.almaherplan.www.QTech.service;
 
 import com.almaherplan.www.QTech.model.*;
 import com.almaherplan.www.QTech.repository.SorahRepository;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.ooxml.JRDocxExporter;
+import net.sf.jasperreports.engine.export.ooxml.JRXlsxExporter;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import net.sf.jasperreports.export.SimpleXlsxReportConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDate;
 import java.time.chrono.HijrahChronology;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 @Service
 public class QTechService {
 
     @Autowired
     private SorahRepository sorahRepository;
+
+    @Value("${DEST.PATH}")
+    private String outputPath;
+
+    @Value("${FILE}")
+    public  String DEST;
+
 
     public ResponseQTech responseQTech(RequestQTech requestQTech){
 
@@ -524,7 +541,6 @@ public class QTechService {
 
         return gregorianDateList;
     }
-
     public List<String> getHijrahDate(List<LocalDate> gregorianDateList){
 
         List<String> hijrahDateList = new ArrayList<>();
@@ -536,9 +552,102 @@ public class QTechService {
               )
             );
         }
-
-
         return hijrahDateList;
     }
+
+    public String printPlan(List<RequestPrint> printList,String printType) throws JRException {
+
+        JRBeanCollectionDataSource jrBeanCollectionDataSource = new JRBeanCollectionDataSource(printList);
+
+
+        Map<String,Object> parameters = new HashMap<String,Object>();
+
+        parameters.put("CollectionBeanParam",jrBeanCollectionDataSource);
+
+
+        JasperReport report = JasperCompileManager.compileReport(System.getProperty("user.dir")+DEST);
+
+        JasperPrint print = JasperFillManager.fillReport(report,parameters,jrBeanCollectionDataSource);
+
+        Random random = new Random();
+        String fileName = printType+random.nextInt(100000);
+        switch (printType) {
+
+            case "pdf":
+                return printPDF(print,fileName);
+            case "docx":
+                return printDocx(print,fileName);
+            case "xlsx":
+                return printXlsx(print,fileName);
+            default:
+                throw new RuntimeException("Unknown argument pass");
+        }
+
+    }
+    private String printPDF(JasperPrint print, String randomName) throws JRException {
+
+
+        System.out.println(System.getProperty("user.dir")+outputPath+"/"+randomName+".pdf");
+
+        JasperExportManager.exportReportToPdfFile(print,outputPath+"/"+randomName+".pdf");
+
+        return  changeToBase64(outputPath+"/"+randomName+".pdf");
+    }
+
+    private String printDocx(JasperPrint print, String randomName) throws JRException {
+
+        JRDocxExporter docxExporter = new JRDocxExporter();
+        File export = new File(outputPath+"/"+randomName+".docx");
+
+        docxExporter.setExporterInput(new SimpleExporterInput(print));
+        docxExporter.setExporterOutput(new SimpleOutputStreamExporterOutput(export));
+        docxExporter.exportReport();
+
+        return  changeToBase64(outputPath+"/"+randomName+".docx");
+    }
+
+    private String printXlsx(JasperPrint print, String randomName) throws JRException {
+
+        SimpleXlsxReportConfiguration configuration = new SimpleXlsxReportConfiguration();
+        configuration.setOnePagePerSheet(true);
+        configuration.setDetectCellType(true);
+        configuration.setCollapseRowSpan(false);
+        configuration.setWhitePageBackground(false);
+
+        JRXlsxExporter xlsxExporter = new JRXlsxExporter();
+        File exportXlsx = new File(outputPath+"/"+randomName+".xlsx");
+
+        xlsxExporter.setConfiguration(configuration);
+
+        xlsxExporter.setExporterInput(new SimpleExporterInput(print));
+        xlsxExporter.setExporterOutput(new SimpleOutputStreamExporterOutput(exportXlsx));
+        xlsxExporter.exportReport();
+
+        return  changeToBase64(outputPath+"/"+randomName+".xlsx");
+    }
+
+    private String changeToBase64(String filePath){
+
+        String base64File = "";
+
+        File file = new File(filePath);
+        try (FileInputStream imageInFile = new FileInputStream(file)) {
+            // Reading a file from file system
+            byte fileData[] = new byte[(int) file.length()];
+            imageInFile.read(fileData);
+            base64File = Base64.getEncoder().encodeToString(fileData);
+        } catch (FileNotFoundException e) {
+            System.out.println("File not found" + e);
+        } catch (IOException ioe) {
+            System.out.println("Exception while reading the file " + ioe);
+        }
+
+//        System.out.println("File name : "+file.getName());
+        System.out.println("File deleted ?? "+file.delete());
+
+        return base64File;
+    }
+
+
 
 }
