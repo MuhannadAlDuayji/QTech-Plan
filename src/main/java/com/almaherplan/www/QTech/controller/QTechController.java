@@ -7,7 +7,6 @@ import com.almaherplan.www.QTech.model.ResponseQTech;
 import com.almaherplan.www.QTech.service.QTechService;
 import net.sf.jasperreports.engine.*;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
@@ -21,12 +20,10 @@ public class QTechController {
     @Autowired
     QTechService qTechService;
 
-
-    @GetMapping()
-    public String getTest(){
-        return "Hi Muhannad";
-    }
-
+//    @GetMapping()
+//    public String getTest(){
+//        return "Hi Muhannad";
+//    }
 
     @PostMapping("/getTechPlan")
     public ResponseQTech getQTechPlan(@RequestBody RequestQTech requestQTech){
@@ -40,9 +37,6 @@ public class QTechController {
 
         return qTechService.printPlan(list,printType);
     }
-
-
-
 
 
 }
