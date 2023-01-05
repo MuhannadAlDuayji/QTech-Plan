@@ -7,7 +7,7 @@ spec:
   project: default
 
   source:
-    repoURL: https://github.com/MuhannadAlDuayji/QTech-Plan.git
+    repoURL: https://github.com/Almaher-QTech/QTech-Plan.git
     targetRevision: config
     path: manifest
   destination: 
