@@ -15,11 +15,11 @@ spec:
     spec:
       containers:
         - name: almaher-backend
-          image: registry.gyoom.sa/almaher-backend:latest
+          image: registry.gyoom.sa/backend:fd1b4f339003221d68dddbb39b463668530a30c5
           ports:
             - containerPort: 8080
           resources:
-              limits:
-                cpu: 200m
-              requests:
-                cpu: 100m
+            limits:
+              cpu: 200m
+            requests:
+              cpu: 100m
