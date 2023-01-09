@@ -15,7 +15,7 @@ spec:
     spec:
       containers:
         - name: almaher-backend
-          image: registry.gyoom.sa/backend:fd1b4f339003221d68dddbb39b463668530a30c5
+          image: registry.gyoom.sa/backend:cd0077f87794ef1af4e05a19efc5ee5d29689fde
           ports:
             - containerPort: 8080
           resources:
