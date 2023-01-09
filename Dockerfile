@@ -6,5 +6,5 @@ COPY Blank_A4.jrxml /QTech
 WORKDIR /QTech
 RUN mkdir "print"
 RUN apk add ttf-dejavu
-EXPOSE 8080 
+EXPOSE 8080
 ENTRYPOINT ["java","-jar","QTech-0.0.1-SNAPSHOT.jar","--spring.config.additional-location=production-jdbc.properties"]
